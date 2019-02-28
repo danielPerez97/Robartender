@@ -12,6 +12,3 @@ INSERT INTO IngredientRecipe VALUES(3, 2);
 
 selectAll:
 SELECT * FROM IngredientRecipe;
-
-SELECT I_ID FROM IngredientRecipe ing
-I
