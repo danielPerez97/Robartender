@@ -13,7 +13,7 @@ class MyApp : Application()
 
         appComponent = DaggerAppComponent.builder()
             .appModule(AppModule(this))
-            .networkModule(NetworkModule("http://localhost:3000"))
+            .networkModule(NetworkModule("http://192.168.1.19:3000"))
             .build()
     }
 }

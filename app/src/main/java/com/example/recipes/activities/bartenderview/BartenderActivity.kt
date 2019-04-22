@@ -12,9 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipes.R
 import com.example.recipes.activities.IngredientsViewModel
-import com.example.recipes.dagger.getComponent
 import com.example.recipes.model.Ingredient
-import com.example.recipes.model.SubmitUiModel
+import com.example.recipes.activities.SubmitUiModel
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -22,7 +21,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import java.util.concurrent.TimeUnit
 
-class BartenderActivity : AppCompatActivity()
+class BartenderActivity: AppCompatActivity()
 {
     private lateinit var viewModel: IngredientsViewModel
     private lateinit var recyclerView: RecyclerView
@@ -33,7 +32,6 @@ class BartenderActivity : AppCompatActivity()
     private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        application.getComponent().inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bartender)
         recyclerView = findViewById(R.id.barRecycView)
@@ -48,11 +46,6 @@ class BartenderActivity : AppCompatActivity()
         submitButton = findViewById(R.id.barSubmitBtn)
         spinner = findViewById(R.id.barProgSpinner)
         viewModel = ViewModelProviders.of(this).get(IngredientsViewModel::class.java)
-
-        disposables += submitButton.clicks()
-            .subscribe{
-                updateIngredients(listOf(Ingredient("Orange Juice", 20), Ingredient("Vodka", 20), Ingredient("Water", 20)))
-            }
 
         disposables += Observable.merge(Observable.just(Unit), refreshButton.clicks())
             .debounce(300, TimeUnit.MILLISECONDS)

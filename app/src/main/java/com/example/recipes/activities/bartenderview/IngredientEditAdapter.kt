@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipes.R
 import com.example.recipes.model.Ingredient
@@ -27,6 +28,7 @@ class IngredientEditAdapter: RecyclerView.Adapter<IngredientEditAdapter.ViewHold
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view)
     {
+        private val pumpId: TextView = view.findViewById(R.id.pumpIdView)
         private val itemName: EditText = view.findViewById(R.id.itemViewName)
         private val itemOz: EditText = view.findViewById(R.id.itemViewOz)
 
@@ -34,6 +36,7 @@ class IngredientEditAdapter: RecyclerView.Adapter<IngredientEditAdapter.ViewHold
         {
             itemName.setText( ingredient.name )
             itemOz.setText( ingredient.oz.toString() )
+            pumpId.text = ingredient.pump.toString()
         }
     }
 }

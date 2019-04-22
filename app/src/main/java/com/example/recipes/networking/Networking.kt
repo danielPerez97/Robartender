@@ -1,7 +1,7 @@
 package com.example.recipes.networking
 
 import com.example.recipes.dagger.MyApp
-import com.example.recipes.model.SubmitUiModel
+import com.example.recipes.activities.SubmitUiModel
 import io.reactivex.ObservableTransformer
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject

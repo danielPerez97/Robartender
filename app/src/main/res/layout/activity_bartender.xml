@@ -34,9 +34,9 @@
     <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/barProgSpinner" app:layout_constraintStart_toEndOf="@+id/barRefreshBtn"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toStartOf="@+id/barSubmitBtn"
-            android:layout_marginEnd="8dp"
+            android:id="@+id/barProgSpinner"
             android:visibility="invisible" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent" tools:visibility="visible"/>
+            app:layout_constraintBottom_toBottomOf="parent" tools:visibility="visible"
+            android:layout_marginEnd="8dp" app:layout_constraintEnd_toStartOf="@+id/barSubmitBtn"
+            app:layout_constraintStart_toEndOf="@+id/barRefreshBtn" android:layout_marginStart="8dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,7 @@ class IngredientViewAdapter: RecyclerView.Adapter<IngredientViewAdapter.ViewHold
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
     {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.ingredient_editor, parent,false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.ingredient_view, parent,false)
         return ViewHolder( v )
     }
 

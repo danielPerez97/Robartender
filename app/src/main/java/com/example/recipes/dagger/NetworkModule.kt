@@ -17,7 +17,7 @@ class NetworkModule(val baseUrl: String)
     @Singleton
     fun provideMoshi(): Moshi
     {
-        return Moshi.Builder().build();
+        return Moshi.Builder().build()
     }
 
     @Provides
@@ -27,7 +27,7 @@ class NetworkModule(val baseUrl: String)
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
             .build()
     }
 

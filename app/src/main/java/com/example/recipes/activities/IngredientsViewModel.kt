@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.example.recipes.networking.Networking
 import com.example.recipes.dagger.MyApp
-import com.example.recipes.model.SubmitUiModel
 import io.reactivex.Observable
 
 class IngredientsViewModel(val app: Application): AndroidViewModel(app)
