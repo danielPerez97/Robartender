@@ -14,15 +14,22 @@ import com.example.recipes.R
 import com.example.recipes.activities.IngredientsViewModel
 import com.example.recipes.model.Ingredient
 import com.example.recipes.activities.SubmitUiModel
+import com.example.recipes.activities.patronview.toast
+import com.example.recipes.dagger.getComponent
 import com.jakewharton.rxbinding3.view.clicks
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class BartenderActivity: AppCompatActivity()
 {
+    @Inject lateinit var moshi: Moshi
     private lateinit var viewModel: IngredientsViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var refreshButton: Button
@@ -32,9 +39,15 @@ class BartenderActivity: AppCompatActivity()
     private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        application.getComponent().inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bartender)
+
         recyclerView = findViewById(R.id.barRecycView)
+        refreshButton = findViewById(R.id.barRefreshBtn)
+        submitButton = findViewById(R.id.barSubmitBtn)
+        spinner = findViewById(R.id.barProgSpinner)
+
         val lm = LinearLayoutManager(recyclerView.context)
         val dividerItemDecoration = DividerItemDecoration(recyclerView.context, lm.orientation)
         recyclerView.apply {
@@ -42,22 +55,38 @@ class BartenderActivity: AppCompatActivity()
             addItemDecoration(dividerItemDecoration)
             adapter = ingAdapter
         }
-        refreshButton = findViewById(R.id.barRefreshBtn)
-        submitButton = findViewById(R.id.barSubmitBtn)
-        spinner = findViewById(R.id.barProgSpinner)
         viewModel = ViewModelProviders.of(this).get(IngredientsViewModel::class.java)
 
-        disposables += Observable.merge(Observable.just(Unit), refreshButton.clicks())
-            .debounce(300, TimeUnit.MILLISECONDS)
+        disposables += Observable.merge( Observable.just(Unit), refreshButton.clicks() )
+            .debounce( 300, TimeUnit.MILLISECONDS )
             .switchMap { viewModel.getIngredients() }
             .distinctUntilChanged()
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn( AndroidSchedulers.mainThread() )
             .subscribe { uiNotification: SubmitUiModel ->
                 when(uiNotification)
                 {
                     is SubmitUiModel.InTransit -> startSpinner()
-                    is SubmitUiModel.Failure -> showFailure(uiNotification.t)
-                    is SubmitUiModel.Success -> updateIngredients(uiNotification.ingredients)
+                    is SubmitUiModel.Failure -> showFailure( uiNotification.t )
+                    is SubmitUiModel.Success.GetIngredients -> updateIngredients( uiNotification.ingredients )
+                }
+            }
+
+        disposables += submitButton.clicks()
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .map { listOf( Ingredient( "OJ", 52, 2 ), Ingredient( "VD", 34, 1 ) ) }
+            .switchMap { viewModel.sendIngredients(it) }
+            .map { SubmitUiModel.Success() }
+            .observeOn( AndroidSchedulers.mainThread() )
+            .subscribe { uiNotification: SubmitUiModel ->
+                when(uiNotification)
+                {
+                    is SubmitUiModel.InTransit -> startSpinner()
+                    is SubmitUiModel.Failure ->  showFailure(uiNotification.t)
+                    is SubmitUiModel.Success ->
+                    {
+                        spinner.visibility = View.INVISIBLE
+                    }
+
                 }
             }
     }

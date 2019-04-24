@@ -1,5 +1,6 @@
 package com.example.recipes.activities.patronview
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -12,8 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipes.R
 import com.example.recipes.activities.IngredientsViewModel
-import com.example.recipes.model.Ingredient
 import com.example.recipes.activities.SubmitUiModel
+import com.example.recipes.dagger.getComponent
+import com.example.recipes.model.Ingredient
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,9 +23,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import java.util.concurrent.TimeUnit
 
+
 class PatronActivity : AppCompatActivity()
 {
-
     private lateinit var viewModel: IngredientsViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var refreshButton: Button
@@ -34,39 +36,34 @@ class PatronActivity : AppCompatActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
+        application.getComponent().inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_patron)
 
-        refreshButton = findViewById(R.id.patronRefreshBtn)
-        submitButton = findViewById(R.id.patronSubmitBtn)
-        spinner = findViewById(R.id.patronProgSpinner)
-        recyclerView = findViewById(R.id.patronRecycView)
+        refreshButton = findViewById( R.id.patronRefreshBtn )
+        submitButton = findViewById( R.id.patronSubmitBtn )
+        spinner = findViewById( R.id.patronProgSpinner )
+        recyclerView = findViewById( R.id.patronRecycView )
 
-        val lm = LinearLayoutManager(recyclerView.context)
-        val dividerItemDecoration = DividerItemDecoration(recyclerView.context, lm.orientation)
+        val lm = LinearLayoutManager( recyclerView.context )
+        val dividerItemDecoration = DividerItemDecoration( recyclerView.context, lm.orientation )
         recyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            addItemDecoration(dividerItemDecoration)
+            layoutManager = LinearLayoutManager( context )
+            addItemDecoration( dividerItemDecoration )
             adapter = ingAdapter
         }
         viewModel = ViewModelProviders.of(this).get(IngredientsViewModel::class.java)
 
-        disposables += submitButton.clicks()
-            .subscribe{
-                updateIngredients(listOf(Ingredient("Orange Juice", 20, 1), Ingredient("Vodka", 20, 2), Ingredient("Water", 20, 3)))
-            }
-
-        disposables += Observable.merge(Observable.just(Unit), refreshButton.clicks())
-            .debounce(300, TimeUnit.MILLISECONDS)
+        disposables += Observable.merge( Observable.just(Unit), refreshButton.clicks() )
+            .debounce( 300, TimeUnit.MILLISECONDS )
             .switchMap { viewModel.getIngredients() }
             .distinctUntilChanged()
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn( AndroidSchedulers.mainThread() )
             .subscribe { uiNotification: SubmitUiModel ->
-                when(uiNotification)
-                {
+                when(uiNotification) {
                     is SubmitUiModel.InTransit -> startSpinner()
-                    is SubmitUiModel.Failure -> showFailure(uiNotification.t)
-                    is SubmitUiModel.Success -> updateIngredients(uiNotification.ingredients)
+                    is SubmitUiModel.Failure -> showFailure( uiNotification.t )
+                    is SubmitUiModel.Success.GetIngredients -> updateIngredients( uiNotification.ingredients )
                 }
             }
     }
@@ -76,16 +73,26 @@ class PatronActivity : AppCompatActivity()
         spinner.visibility = View.VISIBLE
     }
 
-    private fun showFailure(t: Throwable)
+    private fun showFailure( t: Throwable )
     {
         spinner.visibility = View.INVISIBLE
         Toast.makeText(this, t.localizedMessage, Toast.LENGTH_SHORT).show()
     }
 
-    private fun updateIngredients(ingredients: List<Ingredient>)
+    private fun updateIngredients( ingredients: List<Ingredient> )
     {
         ingAdapter.ingredients = ingredients
         ingAdapter.notifyDataSetChanged()
         spinner.visibility = View.INVISIBLE
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.dispose()
+    }
+}
+
+fun Context.toast(message: String, length: Int = Toast.LENGTH_SHORT)
+{
+    Toast.makeText(this, message, length).show()
 }

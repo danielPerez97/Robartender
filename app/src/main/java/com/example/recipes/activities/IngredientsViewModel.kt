@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.example.recipes.networking.Networking
 import com.example.recipes.dagger.MyApp
+import com.example.recipes.model.Ingredient
 import io.reactivex.Observable
 
 class IngredientsViewModel(val app: Application): AndroidViewModel(app)
@@ -12,7 +13,13 @@ class IngredientsViewModel(val app: Application): AndroidViewModel(app)
 
     fun getIngredients(): Observable<SubmitUiModel>
     {
-        return Observable.just(1)
-            .compose(network.ingredients)
+        return Observable.just( Unit )
+            .compose(network.getIngredients)
+    }
+
+    fun sendIngredients(ingredients: List<Ingredient>): Observable<SubmitUiModel>
+    {
+        return Observable.just( ingredients )
+            .compose(network.sendIngredients)
     }
 }

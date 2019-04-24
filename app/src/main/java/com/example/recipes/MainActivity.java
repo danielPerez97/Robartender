@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity
         bartenderButton = findViewById(R.id.bartender_btn);
         patronButton = findViewById(R.id.patron_btn);
 
-        Utils.log("Activity Main Loaded");
+        Utils.log(this, "Activity Main Loaded");
 
         bartenderClicks = RxView.clicks(bartenderButton)
                 .debounce(400, TimeUnit.MILLISECONDS);
@@ -46,10 +46,10 @@ public class MainActivity extends AppCompatActivity
                 .debounce(400, TimeUnit.MILLISECONDS);
 
         disposables.add(
-                bartenderClicks.subscribe(unit -> Utils.startActivity(this, BartenderActivity.class))
+                bartenderClicks.subscribe(unit -> Utils.beginActivity(this, BartenderActivity.class))
         );
         disposables.add(
-                patronClicks.subscribe(unit -> Utils.startActivity(this, PatronActivity.class))
+                patronClicks.subscribe(unit -> Utils.beginActivity(this, PatronActivity.class))
         );
     }
 
