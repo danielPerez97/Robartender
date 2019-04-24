@@ -1,6 +1,7 @@
 package com.example.recipes.activities.bartenderview
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
@@ -66,27 +67,26 @@ class BartenderActivity: AppCompatActivity()
                 when(uiNotification)
                 {
                     is SubmitUiModel.InTransit -> startSpinner()
-                    is SubmitUiModel.Failure -> showFailure( uiNotification.t )
+                    is SubmitUiModel.Failure ->
+                    {
+                        showFailure( uiNotification.t )
+                        Log.wtf("DEBUGGING", uiNotification.t.localizedMessage)
+                    }
                     is SubmitUiModel.Success.GetIngredients -> updateIngredients( uiNotification.ingredients )
                 }
             }
 
         disposables += submitButton.clicks()
+            .map { ingAdapter.ingredients }
             .debounce(300, TimeUnit.MILLISECONDS)
-            .map { listOf( Ingredient( "OJ", 52, 2 ), Ingredient( "VD", 34, 1 ) ) }
             .switchMap { viewModel.sendIngredients(it) }
-            .map { SubmitUiModel.Success() }
             .observeOn( AndroidSchedulers.mainThread() )
             .subscribe { uiNotification: SubmitUiModel ->
                 when(uiNotification)
                 {
                     is SubmitUiModel.InTransit -> startSpinner()
                     is SubmitUiModel.Failure ->  showFailure(uiNotification.t)
-                    is SubmitUiModel.Success ->
-                    {
-                        spinner.visibility = View.INVISIBLE
-                    }
-
+                    is SubmitUiModel.Success ->  uploadSuccess()
                 }
             }
     }
@@ -109,8 +109,15 @@ class BartenderActivity: AppCompatActivity()
         spinner.visibility = View.INVISIBLE
     }
 
+    private fun uploadSuccess()
+    {
+        spinner.visibility = View.INVISIBLE
+        toast("Success")
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         disposables.dispose()
+        ingAdapter.disposables.dispose()
     }
 }

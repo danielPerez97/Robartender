@@ -8,10 +8,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipes.R
 import com.example.recipes.model.Ingredient
+import com.jakewharton.rxbinding3.widget.textChanges
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
+import java.util.concurrent.TimeUnit
 
 class IngredientEditAdapter: RecyclerView.Adapter<IngredientEditAdapter.ViewHolder>()
 {
     var ingredients = listOf<Ingredient>()
+    val disposables = CompositeDisposable()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
     {
@@ -37,6 +42,18 @@ class IngredientEditAdapter: RecyclerView.Adapter<IngredientEditAdapter.ViewHold
             itemName.setText( ingredient.name )
             itemOz.setText( ingredient.oz.toString() )
             pumpId.text = ingredient.pump.toString()
+
+            disposables += itemName.textChanges()
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .subscribe {
+                    ingredient.name = it.toString()
+                }
+
+            disposables += itemOz.textChanges()
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .subscribe{
+                    ingredient.oz = it.toString().toInt()
+                }
         }
     }
 }

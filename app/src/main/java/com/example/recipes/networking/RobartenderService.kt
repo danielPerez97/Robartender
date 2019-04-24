@@ -8,13 +8,13 @@ import retrofit2.http.*
 
 interface RobartenderService
 {
-    @PUT("/pump/{pumpId}")
-    fun uploadIngredients(@Path("pumpId") pumpId: Int, @Body ingredient: String): Completable
+    @PUT("/pumps/{pumpId}")
+    fun uploadIngredients(@Path("pumpId") pumpId: String, @Body ingredient: Ingredient): Completable
 
     @POST("/setrecipes")
     fun uploadRecipes(recipes: List<Recipe>): Completable
 
-    @GET("/getIngredients")
+    @GET("/ingredients")
     fun getIngredients(): Observable<List<Ingredient>>
 
     @GET("/recipes")

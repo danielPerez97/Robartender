@@ -30,7 +30,7 @@ class Networking(app: MyApp)
         it.observeOn(Schedulers.io())
             .flatMapIterable { it }
             .flatMap {
-                robartenderService.uploadIngredients(it.pump, "ingredient: \"${it.name}\" ")
+                robartenderService.uploadIngredients(it.pump.toString(), it)
                     .toSingleDefault<SubmitUiModel>(SubmitUiModel.Success())
                     .onErrorReturn { return@onErrorReturn SubmitUiModel.Failure(it) }
                     .toObservable()
