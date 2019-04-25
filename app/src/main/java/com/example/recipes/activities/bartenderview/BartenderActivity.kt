@@ -11,16 +11,16 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.example.recipes.R
 import com.example.recipes.activities.IngredientsViewModel
-import com.example.recipes.model.Ingredient
 import com.example.recipes.activities.SubmitUiModel
-import com.example.recipes.activities.patronview.toast
 import com.example.recipes.dagger.getComponent
+import com.example.recipes.model.Ingredient
+import com.example.recipes.utils.toast
 import com.jakewharton.rxbinding3.view.clicks
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -31,11 +31,11 @@ import javax.inject.Inject
 class BartenderActivity: AppCompatActivity()
 {
     @Inject lateinit var moshi: Moshi
+    @BindView(R.id.barRecycView) lateinit var recyclerView: RecyclerView
+    @BindView(R.id.barRefreshBtn) lateinit var refreshButton: Button
+    @BindView(R.id.barSubmitBtn) lateinit var submitButton: Button
+    @BindView(R.id.barProgSpinner) lateinit var spinner: ProgressBar
     private lateinit var viewModel: IngredientsViewModel
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var refreshButton: Button
-    private lateinit var submitButton: Button
-    private lateinit var spinner: ProgressBar
     private val ingAdapter = IngredientEditAdapter()
     private val disposables = CompositeDisposable()
 
@@ -43,11 +43,7 @@ class BartenderActivity: AppCompatActivity()
         application.getComponent().inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bartender)
-
-        recyclerView = findViewById(R.id.barRecycView)
-        refreshButton = findViewById(R.id.barRefreshBtn)
-        submitButton = findViewById(R.id.barSubmitBtn)
-        spinner = findViewById(R.id.barProgSpinner)
+        ButterKnife.bind(this)
 
         val lm = LinearLayoutManager(recyclerView.context)
         val dividerItemDecoration = DividerItemDecoration(recyclerView.context, lm.orientation)

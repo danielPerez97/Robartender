@@ -11,12 +11,12 @@ interface RobartenderService
     @PUT("/pumps/{pumpId}")
     fun uploadIngredients(@Path("pumpId") pumpId: String, @Body ingredient: Ingredient): Completable
 
-    @POST("/setrecipes")
-    fun uploadRecipes(recipes: List<Recipe>): Completable
+    @PUT("/makeRecipe")
+    fun makeRecipe(@Body recipe: Recipe): Completable
 
     @GET("/ingredients")
     fun getIngredients(): Observable<List<Ingredient>>
 
     @GET("/recipes")
-    fun getRecipes(): Observable<Recipe>
+    fun getRecipes(): Observable<List<Recipe>>
 }

@@ -26,6 +26,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
+kapt {
+    generateStubs = true
+}
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -44,7 +47,7 @@ dependencies {
     implementation "com.squareup.sqldelight:android-driver:$sqldelight_version"
     implementation "com.squareup.sqldelight:rxjava2-extensions:$sqldelight_version"
     implementation 'com.jakewharton:butterknife:10.1.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+    kapt 'com.jakewharton:butterknife-compiler:10.1.0'
     implementation 'com.squareup.okhttp3:okhttp:3.14.1'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'

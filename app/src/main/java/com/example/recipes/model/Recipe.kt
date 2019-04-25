@@ -1,4 +1,9 @@
 package com.example.recipes.model
 
-class Recipe {
-}
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
+data class Recipe(val id: Int,
+                  val ingredientOne: Ingredient,
+                  val ingredientTwo: Ingredient
+)

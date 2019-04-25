@@ -51,6 +51,7 @@ class IngredientEditAdapter: RecyclerView.Adapter<IngredientEditAdapter.ViewHold
 
             disposables += itemOz.textChanges()
                 .debounce(500, TimeUnit.MILLISECONDS)
+                .filter { it.toString() != "" }
                 .subscribe{
                     ingredient.oz = it.toString().toInt()
                 }
